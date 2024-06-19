@@ -1,13 +1,6 @@
 #include "Graph.hpp"
 #include <iostream>
-
-Graph::Graph(/* args */)
-{
-}
-
-Graph::~Graph()
-{
-}
+#include <queue>
 
 bool Graph::addVertex(const std::string& name)
 {
@@ -39,6 +32,32 @@ void Graph::printGraph()
 		for (const auto& [weight, adj] : vertex->adjacents)
 		{
 			std::cout << "  -> " << adj->name << " with weight " << weight << std::endl;
+		}
+	}
+}
+
+void Graph::BFS(const std::string& startNode)
+{
+	std::map<std::string, bool> visited;
+	std::for_each(vertices.begin(), vertices.end(), [&visited](const auto& currentVertex) {visited[currentVertex.first] = false; });
+	std::queue<Vertex*> queue;
+
+	queue.push(vertices[startNode]);
+	visited[startNode] = true;
+
+	while (!queue.empty())
+	{
+		const auto vertex = queue.front();
+		queue.pop();
+		std::cout << "--> " << vertex->name << std::endl;
+
+		for (const auto& [weight, adjacentVertex] : vertex->adjacents)
+		{
+			if (!visited[adjacentVertex->name])
+			{
+				visited[adjacentVertex->name] = true;
+				queue.push(adjacentVertex);
+			}
 		}
 	}
 }

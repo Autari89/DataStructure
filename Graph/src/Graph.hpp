@@ -16,11 +16,8 @@ private:
 	std::map<std::string, Vertex*> vertices;
 
 public:
-	Graph(/* args */);
-
 	bool addVertex(const std::string& name);
 	bool addEdge(const std::string& from, const std::string& to, int weight);
 	void printGraph();
-
-	~Graph();
+	void BFS(const std::string& start);
 };
