@@ -20,4 +20,5 @@ public:
 	bool addEdge(const std::string& from, const std::string& to, int weight);
 	void printGraph();
 	void BFS(const std::string& start);
+	void FindPathBFS(const std::string& start, const std::string& end);
 };

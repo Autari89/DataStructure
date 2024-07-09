@@ -1,6 +1,7 @@
 #include "Graph.hpp"
 #include <iostream>
 #include <queue>
+#include <limits>
 
 bool Graph::addVertex(const std::string& name)
 {
@@ -60,4 +61,39 @@ void Graph::BFS(const std::string& startNode)
 			}
 		}
 	}
+}
+
+void Graph::FindPathBFS(const std::string& start, const std::string& end)
+{
+	std::map<std::string, std::vector<std::string>> parentMap;
+	std::map<std::string, int> distanceMap;
+	std::for_each(vertices.begin(), vertices.end(), [&distanceMap](const auto& currentVertex)
+		{
+			distanceMap[currentVertex.first] = std::numeric_limits<int>::max();
+		});
+	std::queue<Vertex*> queue;
+
+	queue.push(vertices[start]);
+	distanceMap[start] = 0;
+
+	while (!queue.empty())
+	{
+		Vertex* currentNode = queue.front();
+		queue.pop();
+		for (const auto& [weight, adjacentVertex] : currentNode->adjacents)
+		{
+			if (distanceMap[adjacentVertex->name] == std::numeric_limits<int>::max())
+			{
+				distanceMap[adjacentVertex->name] = distanceMap[currentNode->name] + 1;
+				parentMap[adjacentVertex->name] = parentMap[currentNode->name];
+				parentMap[adjacentVertex->name].push_back(currentNode->name);
+				queue.push(adjacentVertex);
+			}
+		}
+	}
+
+	std::cout << "Path from " << start << " to " << end << std::endl;
+	for_each(parentMap[end].begin(), parentMap[end].end(), [](const auto& parent) {std::cout << parent << "--"; });
+	std::cout << end << std::endl;
+	std::cout << "Total steps " << distanceMap[end] << std::endl;
 }
