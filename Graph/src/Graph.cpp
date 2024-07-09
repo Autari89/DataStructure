@@ -5,29 +5,29 @@
 
 bool Graph::addVertex(const std::string& name)
 {
-	if (vertices.contains(name))
+	if (m_vertices.contains(name))
 	{
 		return false;
 	}
 
-	vertices[name] = new Vertex{name};
+	m_vertices[name] = new Vertex{name};
 	return true;
 }
 
 bool Graph::addEdge(const std::string& from, const std::string& to, int weight)
 {
-	if (!vertices.contains(from) || !vertices.contains(to))
+	if (!m_vertices.contains(from) || !m_vertices.contains(to))
 	{
 		return false;
 	}
 
-	vertices[from]->adjacents.push_back({weight, vertices[to]});
+	m_vertices[from]->adjacents.push_back({weight, m_vertices[to]});
 	return true;
 }
 
 void Graph::printGraph()
 {
-	for (const auto& [name, vertex] : vertices)
+	for (const auto& [name, vertex] : m_vertices)
 	{
 		std::cout << "Vertex: " << name << std::endl;
 		for (const auto& [weight, adj] : vertex->adjacents)
@@ -40,10 +40,10 @@ void Graph::printGraph()
 void Graph::BFS(const std::string& startNode)
 {
 	std::map<std::string, bool> visited;
-	std::for_each(vertices.begin(), vertices.end(), [&visited](const auto& currentVertex) {visited[currentVertex.first] = false; });
+	std::for_each(m_vertices.begin(), m_vertices.end(), [&visited](const auto& currentVertex) {visited[currentVertex.first] = false; });
 	std::queue<Vertex*> queue;
 
-	queue.push(vertices[startNode]);
+	queue.push(m_vertices[startNode]);
 	visited[startNode] = true;
 
 	while (!queue.empty())
@@ -67,13 +67,13 @@ void Graph::FindPathBFS(const std::string& start, const std::string& end)
 {
 	std::map<std::string, std::vector<std::string>> parentMap;
 	std::map<std::string, int> distanceMap;
-	std::for_each(vertices.begin(), vertices.end(), [&distanceMap](const auto& currentVertex)
+	std::for_each(m_vertices.begin(), m_vertices.end(), [&distanceMap](const auto& currentVertex)
 		{
 			distanceMap[currentVertex.first] = std::numeric_limits<int>::max();
 		});
 	std::queue<Vertex*> queue;
 
-	queue.push(vertices[start]);
+	queue.push(m_vertices[start]);
 	distanceMap[start] = 0;
 
 	while (!queue.empty())
@@ -96,4 +96,27 @@ void Graph::FindPathBFS(const std::string& start, const std::string& end)
 	for_each(parentMap[end].begin(), parentMap[end].end(), [](const auto& parent) {std::cout << parent << "--"; });
 	std::cout << end << std::endl;
 	std::cout << "Total steps " << distanceMap[end] << std::endl;
+}
+
+void Graph::DFS(const std::string& start)
+{
+	std::map<std::string, bool> visited;
+	std::for_each(m_vertices.begin(), m_vertices.end(), [&visited](const auto& currentVertex) {visited[currentVertex.first] = false; });
+	rDFS(visited, start);
+}
+
+void Graph::rDFS(std::map<std::string, bool>& visitedNodes, const std::string& currentNode)
+{
+	if (visitedNodes[currentNode])
+	{
+		return;
+	}
+
+	visitedNodes[currentNode] = true;
+	std::cout << "Vertex " << currentNode << std::endl;
+
+	for (const auto& [weight, adjacentVertex] : m_vertices[currentNode]->adjacents)
+	{
+		rDFS(visitedNodes, adjacentVertex->name);
+	}
 }

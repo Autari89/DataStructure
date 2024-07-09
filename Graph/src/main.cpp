@@ -44,5 +44,7 @@ int main(int argc, char *argv[])
     myGraph.BFS("A");
     myGraph.FindPathBFS("C", "F");
 
+    myGraph.DFS("A");
+
     return 0;
 }
